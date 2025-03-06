@@ -1,4 +1,5 @@
-﻿.calculator {
+﻿/* Calculator Main Container */
+.calculator {
     width: 300px;
     margin: 50px auto;
     background-color: #f4f4f4;
@@ -7,6 +8,7 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
+/* Display Screen */
 .display {
     width: 100%;
     height: 40px;
@@ -18,12 +20,14 @@
     border-radius: 5px;
 }
 
+/* Button Grid Layout */
 .buttons {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 5px;
 }
 
+/* Button Styles */
 button {
     padding: 15px;
     font-size: 18px;
@@ -59,4 +63,48 @@ button:hover {
 
 .clear:hover {
     background-color: #ff3333;
+}
+
+/* Calculator and History Container */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* History Panel */
+.history {
+    width: 200px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.history h2 {
+    margin-top: 0;
+}
+
+.history ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.history li {
+    margin-bottom: 10px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .history {
+        width: 100%;
+        margin-top: 20px;
+    }
 }

@@ -10,9 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function appendNumber(number) {
+    // If starting a new number after an operator or result, reset currentInput
     if (newNumberFlag) {
-        currentInput = '';
+        currentInput = number;
         newNumberFlag = false;
+        updateDisplay();
+        return;
     }
     
     // Prevent multiple decimal points
@@ -20,25 +23,41 @@ function appendNumber(number) {
         return;
     }
     
-    currentInput += number;
+    // Handle the case when current input is '0'
+    if (currentInput === '0' && number !== '.') {
+        currentInput = number;
+    } else {
+        currentInput += number;
+    }
     updateDisplay();
 }
 
 function appendOperator(operator) {
+    // Don't allow operator if no input
     if (currentInput === '' && previousInput === '') return;
     
-    if (currentInput === '') {
+    // If we have a previous calculation, use the current input as the start of a new calculation
+    if (newNumberFlag) {
+        previousInput = currentInput;
+        currentInput = '';
         currentOperator = operator;
+        updateDisplay();
         return;
     }
     
-    if (previousInput !== '') {
+    // If we already have a previous input, calculate the result before setting new operator
+    if (previousInput !== '' && currentInput !== '' && currentOperator !== null) {
         calculate();
+        previousInput = currentInput;
+        currentInput = '';
+    } else {
+        // Store current input as previous and prepare for new input
+        previousInput = currentInput;
+        currentInput = '';
     }
     
-    previousInput = currentInput;
     currentOperator = operator;
-    newNumberFlag = true;
+    updateDisplay();
 }
 
 function calculate() {
@@ -70,11 +89,22 @@ function calculate() {
             break;
     }
     
-    currentInput = result.toString();
+    const expression = `${prev} ${currentOperator} ${current} = ${result}`;
+    addToHistory(expression);
+    
+    // Format the result to prevent excessive decimal places
+    currentInput = Number(result.toFixed(10)).toString();
     previousInput = '';
     currentOperator = null;
-    updateDisplay();
     newNumberFlag = true;
+    updateDisplay();
+}
+
+function addToHistory(entry) {
+    const historyList = document.getElementById('history-list');
+    const listItem = document.createElement('li');
+    listItem.textContent = entry;
+    historyList.appendChild(listItem);
 }
 
 function clearDisplay() {
@@ -86,7 +116,13 @@ function clearDisplay() {
 }
 
 function updateDisplay() {
-    if (display) {
+    if (!display) return;
+    
+    if (previousInput === '') {
+        // Show just the current input if no previous input exists
         display.value = currentInput || '0';
+    } else {
+        // Show the complete expression
+        display.value = `${previousInput} ${currentOperator || ''} ${currentInput || ''}`.trim();
     }
 }
