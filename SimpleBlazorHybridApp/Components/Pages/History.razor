@@ -1,0 +1,23 @@
+@page "/history"
+@inject Services.CalculatorService CalculatorService
+
+<h3>Calculation History</h3>
+
+<div class="history-list">
+    @foreach (var item in CalculatorService.History.OrderByDescending(h => h.Timestamp))
+    {
+        <div class="history-item">
+            <div class="calculation">@item.Expression = @item.Result</div>
+            <div class="timestamp">@item.Timestamp.ToString("g")</div>
+        </div>
+    }
+</div>
+
+<button class="btn btn-danger" @onclick="ClearHistory">Clear History</button>
+
+@code {
+    private void ClearHistory()
+    {
+        CalculatorService.ClearHistory();
+    }
+}

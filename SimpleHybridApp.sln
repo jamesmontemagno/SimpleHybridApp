@@ -4,6 +4,8 @@ VisualStudioVersion = 17.14.35821.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleHybridApp", "SimpleHybridApp\SimpleHybridApp.csproj", "{C9FED315-C5DA-459A-8E67-69D64FC4C9D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleBlazorHybridApp", "SimpleBlazorHybridApp\SimpleBlazorHybridApp.csproj", "{ACB49FC3-A77D-4CFD-B60E-B43DE4DBC65C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,15 @@ Global
 		{C9FED315-C5DA-459A-8E67-69D64FC4C9D6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C9FED315-C5DA-459A-8E67-69D64FC4C9D6}.Release|ARM64.ActiveCfg = Release|ARM64
 		{C9FED315-C5DA-459A-8E67-69D64FC4C9D6}.Release|ARM64.Build.0 = Release|ARM64
+		{ACB49FC3-A77D-4CFD-B60E-B43DE4DBC65C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACB49FC3-A77D-4CFD-B60E-B43DE4DBC65C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACB49FC3-A77D-4CFD-B60E-B43DE4DBC65C}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{ACB49FC3-A77D-4CFD-B60E-B43DE4DBC65C}.Debug|ARM64.Build.0 = Debug|ARM64
+		{ACB49FC3-A77D-4CFD-B60E-B43DE4DBC65C}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{ACB49FC3-A77D-4CFD-B60E-B43DE4DBC65C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACB49FC3-A77D-4CFD-B60E-B43DE4DBC65C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACB49FC3-A77D-4CFD-B60E-B43DE4DBC65C}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{ACB49FC3-A77D-4CFD-B60E-B43DE4DBC65C}.Release|ARM64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

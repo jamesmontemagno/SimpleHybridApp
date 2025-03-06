@@ -1,0 +1,112 @@
+@page "/calculator"
+@inject Services.CalculatorService CalculatorService
+@inject NavigationManager Navigation
+
+<h3>Calculator</h3>
+
+<div class="calculator">
+    <div class="display">
+        <div class="expression">@_expression</div>
+        <div class="result">@_currentNumber</div>
+    </div>
+
+    <div class="keypad">
+        <button class="btn-number" @onclick="() => HandleNumber('7')">7</button>
+        <button class="btn-number" @onclick="() => HandleNumber('8')">8</button>
+        <button class="btn-number" @onclick="() => HandleNumber('9')">9</button>
+        <button class="btn-operator" @onclick="() => HandleOperator('/')">/</button>
+        
+        <button class="btn-number" @onclick="() => HandleNumber('4')">4</button>
+        <button class="btn-number" @onclick="() => HandleNumber('5')">5</button>
+        <button class="btn-number" @onclick="() => HandleNumber('6')">6</button>
+        <button class="btn-operator" @onclick="() => HandleOperator('*')">×</button>
+        
+        <button class="btn-number" @onclick="() => HandleNumber('1')">1</button>
+        <button class="btn-number" @onclick="() => HandleNumber('2')">2</button>
+        <button class="btn-number" @onclick="() => HandleNumber('3')">3</button>
+        <button class="btn-operator" @onclick="() => HandleOperator('-')">-</button>
+        
+        <button class="btn-number" @onclick="() => HandleNumber('0')">0</button>
+        <button class="btn-number" @onclick="() => HandleNumber('.')">.</button>
+        <button class="btn-equal" @onclick="Calculate">=</button>
+        <button class="btn-operator" @onclick="() => HandleOperator('+')">+</button>
+        
+        <button class="btn-clear span-2" @onclick="Clear">Clear</button>
+    </div>
+</div>
+
+<button class="btn-history" @onclick="NavigateToHistory">View History</button>
+
+@code {
+    private string _currentNumber = "0";
+    private string _expression = "";
+    private bool _newNumber = true;
+    private double _lastResult = 0;
+    private char _lastOperator = '\0';
+
+    private void HandleNumber(char num)
+    {
+        if (_newNumber)
+        {
+            _currentNumber = num.ToString();
+            _newNumber = false;
+        }
+        else
+        {
+            _currentNumber = _currentNumber == "0" ? num.ToString() : _currentNumber + num;
+        }
+    }
+
+    private void HandleOperator(char op)
+    {
+        if (!_newNumber)
+        {
+            Calculate();
+        }
+        _lastOperator = op;
+        _expression = $"{_lastResult} {op}";
+        _currentNumber = "0"; // Clear the display after an operator is pressed
+        _newNumber = true;
+    }
+
+    private void Calculate()
+    {
+        if (_lastOperator == '\0')
+        {
+            _lastResult = double.Parse(_currentNumber);
+            return;
+        }
+
+        var currentValue = double.Parse(_currentNumber);
+        var fullExpression = $"{_expression} {_currentNumber}";
+
+        _lastResult = _lastOperator switch
+        {
+            '+' => _lastResult + currentValue,
+            '-' => _lastResult - currentValue,
+            '*' => _lastResult * currentValue,
+            '/' => _lastResult / currentValue,
+            _ => currentValue
+        };
+
+        CalculatorService.AddToHistory(fullExpression, _lastResult);
+        _currentNumber = _lastResult.ToString();
+        _expression = "";
+        _lastOperator = '\0';
+        _newNumber = true;
+    }
+
+    private void Clear()
+    {
+        _currentNumber = "0";
+        _expression = "";
+        _lastResult = 0;
+        _lastOperator = '\0';
+        _newNumber = true;
+    }
+
+    private void NavigateToHistory()
+    {
+        Navigation.NavigateTo("/history");
+    }
+}

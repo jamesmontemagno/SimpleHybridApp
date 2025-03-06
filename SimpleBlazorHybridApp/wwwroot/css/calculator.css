@@ -1,0 +1,127 @@
+.calculator {
+    max-width: 300px;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+}
+
+.display {
+    background-color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    text-align: right;
+}
+
+.expression {
+    font-size: 14px;
+    color: #666;
+    min-height: 20px;
+}
+
+.result {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+}
+
+/* Button color styles - placed before generic button styles for proper cascade */
+.keypad button.btn-number {
+    background-color: #e8e8e8 !important;
+    color: #000;
+    transition: background-color 0.2s;
+}
+
+.keypad button.btn-operator {
+    background-color: #ffa726 !important;
+    color: #000;
+    transition: background-color 0.2s;
+}
+
+.keypad button.btn-equal {
+    background-color: #66bb6a !important;
+    color: #fff;
+    transition: background-color 0.2s;
+}
+
+.keypad button.btn-clear {
+    background-color: #ef5350 !important;
+    color: #fff;
+    transition: background-color 0.2s;
+}
+
+/* Hover effects for buttons */
+.keypad button.btn-number:hover {
+    background-color: #d4d4d4 !important;
+}
+
+.keypad button.btn-operator:hover {
+    background-color: #ff9100 !important;
+}
+
+.keypad button.btn-equal:hover {
+    background-color: #43a047 !important;
+}
+
+.keypad button.btn-clear:hover {
+    background-color: #e53935 !important;
+}
+
+/* Generic button styles */
+.keypad button {
+    padding: 15px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.span-2 {
+    grid-column: span 2;
+}
+
+/* History button styles */
+button.btn-history {
+    background-color: #42a5f5 !important;
+    color: #fff;
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.2s;
+}
+
+button.btn-history:hover {
+    background-color: #1e88e5 !important;
+}
+
+/* History list styles */
+.history-list {
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.history-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.history-item .calculation {
+    font-size: 18px;
+}
+
+.history-item .timestamp {
+    font-size: 12px;
+    color: #666;
+}
