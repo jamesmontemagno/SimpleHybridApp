@@ -9,6 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
     clearDisplay();
 });
 
+
+window.addEventListener(
+    "HybridWebViewMessageReceived",
+    function (e) {
+        if (e.detail.message === "Celebrate")
+            triggerConfetti();
+    });
+
 function appendNumber(number) {
     // If starting a new number after an operator or result, reset currentInput
     if (newNumberFlag) {
@@ -98,6 +106,19 @@ function calculate() {
     currentOperator = null;
     newNumberFlag = true;
     updateDisplay();
+
+    // Trigger confetti if result is 25
+    if (result === 25) {
+        window.HybridWebView.SendRawMessage('Celebrate');
+    }
+}
+
+function triggerConfetti() {
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
 }
 
 function addToHistory(entry) {
