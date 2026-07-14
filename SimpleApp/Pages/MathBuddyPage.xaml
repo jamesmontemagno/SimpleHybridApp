@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SimpleApp.ViewModels"
+             x:Class="SimpleApp.Pages.MathBuddyPage"
+             x:DataType="vm:MathBuddyViewModel"
+             Title="Math Buddy"
+             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <Grid Padding="16"
+          RowDefinitions="Auto,*,Auto,Auto"
+          RowSpacing="12"
+          AutomationId="MathBuddyPage">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="4">
+            <Label Text="Math Buddy"
+                   Style="{StaticResource Headline}"
+                   AutomationId="MathBuddyTitleLabel" />
+            <Label Text="{Binding StatusText}"
+                   AutomationId="MathBuddyStatusLabel"
+                   FontSize="13"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="1"
+                        x:Name="MessagesView"
+                        ItemsSource="{Binding Messages}"
+                        AutomationId="MathBuddyMessages"
+                        SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="Start a conversation with your math tutor."
+                       HorizontalTextAlignment="Center"
+                       Margin="0,40"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:MathBuddyMessage">
+                    <Grid Padding="0,4">
+                        <Border StrokeThickness="0"
+                                StrokeShape="RoundRectangle 14"
+                                Padding="12"
+                                HorizontalOptions="{Binding IsUser, Converter={StaticResource BoolToLayoutOptionsConverter}}"
+                                MaximumWidthRequest="520"
+                                Background="{Binding IsUser, Converter={StaticResource BoolToBubbleBrushConverter}}">
+                            <Label Text="{Binding Text}"
+                                   LineBreakMode="WordWrap"
+                                   TextColor="{Binding IsUser, Converter={StaticResource BoolToBubbleTextConverter}}" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <ScrollView Grid.Row="2" Orientation="Horizontal" HeightRequest="44">
+            <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Suggestions}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Button Text="{Binding .}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RunSuggestionCommand}"
+                                CommandParameter="{Binding .}"
+                                Style="{StaticResource MathBuddyChipButton}" />
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <Grid Grid.Row="3"
+              RowDefinitions="Auto,Auto"
+              RowSpacing="8">
+            <Entry Grid.Row="0"
+                   x:Name="MessageEntry"
+                   AutomationId="MathBuddyInput"
+                   Placeholder="Ask a math question..."
+                   Text="{Binding InputText}"
+                   ReturnCommand="{Binding SendCommand}"
+                   TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                   PlaceholderColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                   Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}" />
+            <HorizontalStackLayout Grid.Row="1"
+                       Spacing="8"
+                       HorizontalOptions="End">
+            <Button Text="Send"
+                AutomationId="MathBuddySend"
+                Command="{Binding SendCommand}"
+                Style="{StaticResource CalcEqualsButton}" />
+            <Button Text="Explain"
+                AutomationId="MathBuddyExplain"
+                Command="{Binding ExplainCurrentCommand}"
+                Style="{StaticResource CalcHistoryButton}" />
+            <Button Text="Clear"
+                AutomationId="MathBuddyClear"
+                Command="{Binding ClearChatCommand}"
+                Style="{StaticResource CalcClearButton}" />
+            </HorizontalStackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>

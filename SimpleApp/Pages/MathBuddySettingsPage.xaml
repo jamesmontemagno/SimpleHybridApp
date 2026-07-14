@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SimpleApp.ViewModels"
+             x:Class="SimpleApp.Pages.MathBuddySettingsPage"
+             x:DataType="vm:MathBuddySettingsViewModel"
+             Title="Settings"
+             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <Grid Padding="16"
+          RowDefinitions="Auto,*,Auto"
+          RowSpacing="12"
+          AutomationId="MathBuddySettingsPage">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="4">
+            <Label Text="Math Buddy Settings"
+                   Style="{StaticResource Headline}"
+                   AutomationId="MathBuddySettingsTitleLabel" />
+            <Label Text="{Binding StatusText}"
+                   AutomationId="MathBuddySettingsStatusLabel"
+                   FontSize="13"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="12">
+                <Border StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="12"
+                        Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="API key"
+                               FontAttributes="Bold" />
+                        <Entry Text="{Binding ApiKey, Mode=TwoWay}"
+                               AutomationId="MathBuddyApiKeyEntry"
+                               IsPassword="True"
+                               Placeholder="OPENAI_API_KEY" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="12"
+                        Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Endpoint"
+                               FontAttributes="Bold" />
+                        <Entry Text="{Binding Endpoint, Mode=TwoWay}"
+                               AutomationId="MathBuddyEndpointEntry"
+                               Keyboard="Url"
+                               Placeholder="OPENAI_ENDPOINT" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="12"
+                        Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Model"
+                               FontAttributes="Bold" />
+                        <Entry Text="{Binding Model, Mode=TwoWay}"
+                               AutomationId="MathBuddyModelEntry"
+                               Placeholder="gpt-4o-mini" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="12">
+            <Button Grid.Column="0"
+                    Text="Clear"
+                    AutomationId="MathBuddyClearSettings"
+                    Command="{Binding ClearSettingsCommand}"
+                    Style="{StaticResource CalcClearButton}" />
+            <Button Grid.Column="1"
+                    Text="Save"
+                    AutomationId="MathBuddySaveSettings"
+                    Command="{Binding SaveCommand}"
+                    Style="{StaticResource CalcEqualsButton}" />
+        </Grid>
+    </Grid>
+</ContentPage>

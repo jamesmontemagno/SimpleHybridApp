@@ -16,7 +16,7 @@
             await Dispatcher.DispatchAsync(async () =>
             {
 
-                var celebrate = await DisplayAlert("Celebrate", "Do you want to celebrate?", "Yes", "No");
+                var celebrate = await DisplayAlertAsync("Celebrate", "Do you want to celebrate?", "Yes", "No");
 
                 if (celebrate)
                     hybridWebView.SendRawMessage("Celebrate");
