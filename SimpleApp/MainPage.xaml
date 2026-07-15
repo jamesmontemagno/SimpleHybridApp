@@ -92,5 +92,11 @@
                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
                FontSize="14"
                HorizontalTextAlignment="Center" />
+
+        <GraphicsView x:Name="ConfettiView"
+                                        Grid.RowSpan="4"
+                                        AutomationId="ConfettiOverlay"
+                                        InputTransparent="True"
+                                        IsVisible="False" />
     </Grid>
 </ContentPage>

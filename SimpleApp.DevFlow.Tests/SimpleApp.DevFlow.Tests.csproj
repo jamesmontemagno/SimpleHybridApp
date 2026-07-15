@@ -9,7 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest" Version="4.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
+    <PackageReference Include="MSTest" Version="4.3.2" />
     <PackageReference Include="Microsoft.Maui.DevFlow.Driver" Version="0.1.0-preview.12.26358.3" />
   </ItemGroup>
 

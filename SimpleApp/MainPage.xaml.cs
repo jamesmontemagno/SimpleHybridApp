@@ -6,11 +6,13 @@ namespace SimpleApp;
 public partial class MainPage : ContentPage
 {
 	readonly CalculatorService _calculator;
+	readonly ConfettiDrawable _confetti = new();
 
 	public MainPage()
 	{
 		InitializeComponent();
 		_calculator = ResolveCalculator();
+		ConfettiView.Drawable = _confetti;
 		RefreshUi();
 	}
 
@@ -38,13 +40,13 @@ public partial class MainPage : ContentPage
 		RefreshUi("Operator set");
 	}
 
-	async void OnEqualsClicked(object? sender, EventArgs e)
+	void OnEqualsClicked(object? sender, EventArgs e)
 	{
 		var result = _calculator.Calculate();
 		RefreshUi(double.IsNaN(result) ? "Division by zero" : $"Result: {_calculator.Display}");
 
 		if (_calculator.ShouldCelebrate)
-			await CelebrateAsync();
+			Celebrate();
 	}
 
 	void OnClearClicked(object? sender, EventArgs e)
@@ -94,17 +96,25 @@ public partial class MainPage : ContentPage
 		}
 	}
 
-	async Task CelebrateAsync()
+	void Celebrate()
 	{
-		var celebrate = await DisplayAlertAsync(
-			"Celebrate",
-			"You reached 25! Do you want to celebrate?",
-			"Yes",
-			"No");
+		StatusLabel.Text = "Celebration time!";
+		_confetti.Start();
+		ConfettiView.IsVisible = true;
 
-		StatusLabel.Text = celebrate
-			? "Celebration time! 🎉"
-			: "Maybe next time";
+		Dispatcher.StartTimer(TimeSpan.FromMilliseconds(16), () =>
+		{
+			_confetti.Advance();
+			ConfettiView.Invalidate();
+
+			if (_confetti.IsComplete)
+			{
+				ConfettiView.IsVisible = false;
+				return false;
+			}
+
+			return true;
+		});
 	}
 
 	void RefreshUi(string? status = null)
@@ -121,4 +131,62 @@ public partial class MainPage : ContentPage
 			?? throw new InvalidOperationException("MAUI services are not available.");
 		return services.GetRequiredService<CalculatorService>();
 	}
+}
+
+sealed class ConfettiDrawable : IDrawable
+{
+	static readonly Color[] Colors =
+	[
+		Color.FromArgb("#512BD4"),
+		Color.FromArgb("#E600A9"),
+		Color.FromArgb("#00A89C"),
+		Color.FromArgb("#F5A623"),
+		Color.FromArgb("#1677FF")
+	];
+
+	readonly ConfettiPiece[] _pieces = CreatePieces();
+	DateTime _startedAt;
+
+	public bool IsComplete => DateTime.UtcNow - _startedAt >= TimeSpan.FromSeconds(2.5);
+
+	public void Start() => _startedAt = DateTime.UtcNow;
+
+	public void Advance()
+	{
+	}
+
+	public void Draw(ICanvas canvas, RectF dirtyRect)
+	{
+		var elapsed = (float)(DateTime.UtcNow - _startedAt).TotalSeconds;
+		var progress = Math.Clamp(elapsed / 2.5f, 0f, 1f);
+
+		foreach (var piece in _pieces)
+		{
+			var x = piece.StartX * dirtyRect.Width + piece.Drift * progress * dirtyRect.Width;
+			var y = (-24f + piece.Delay * 90f) + progress * progress * (dirtyRect.Height + 80f);
+
+			canvas.SaveState();
+			canvas.Translate(x, y);
+			canvas.Rotate((piece.Rotation + progress * 720f) % 360f);
+			canvas.FillColor = Colors[piece.ColorIndex];
+			canvas.FillRectangle(-piece.Size / 2f, -piece.Size / 2f, piece.Size, piece.Size * 0.55f);
+			canvas.RestoreState();
+		}
+	}
+
+	static ConfettiPiece[] CreatePieces()
+	{
+		var random = new Random(25);
+		return Enumerable.Range(0, 54)
+			.Select(_ => new ConfettiPiece(
+				(float)random.NextDouble(),
+				(float)(random.NextDouble() - 0.5) * 0.35f,
+				(float)random.NextDouble() * 3f,
+				random.Next(8, 15),
+				random.Next(Colors.Length),
+				(float)random.NextDouble() * 0.45f))
+			.ToArray();
+	}
+
+	record ConfettiPiece(float StartX, float Drift, float Rotation, float Size, int ColorIndex, float Delay);
 }

@@ -12,15 +12,22 @@
           RowSpacing="12"
           AutomationId="MathBuddyPage">
 
-        <VerticalStackLayout Grid.Row="0" Spacing="4">
-            <Label Text="Math Buddy"
-                   Style="{StaticResource Headline}"
-                   AutomationId="MathBuddyTitleLabel" />
-            <Label Text="{Binding StatusText}"
-                   AutomationId="MathBuddyStatusLabel"
-                   FontSize="13"
-                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
-        </VerticalStackLayout>
+         <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+             <VerticalStackLayout Grid.Column="0" Spacing="4">
+              <Label Text="Math Buddy"
+                  Style="{StaticResource Headline}"
+                  AutomationId="MathBuddyTitleLabel" />
+              <Label Text="{Binding StatusText}"
+                  AutomationId="MathBuddyStatusLabel"
+                  FontSize="13"
+                  TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+             </VerticalStackLayout>
+             <ActivityIndicator Grid.Column="1"
+                       AutomationId="MathBuddyLoadingIndicator"
+                       IsRunning="{Binding IsBusy}"
+                       IsVisible="{Binding IsBusy}"
+                               Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+         </Grid>
 
         <CollectionView Grid.Row="1"
                         x:Name="MessagesView"

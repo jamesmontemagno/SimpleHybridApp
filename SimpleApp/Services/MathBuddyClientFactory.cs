@@ -35,6 +35,8 @@ public sealed class MathBuddyClientFactory
 
 	public bool IsAvailable => IsAppleIntelligenceAvailable || _settingsService.GetSettings().HasCloudConfiguration;
 
+	public bool IsUsingAppleIntelligence => IsAppleIntelligenceAvailable;
+
 	public string AvailabilityMessage
 	{
 		get
