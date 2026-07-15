@@ -14,7 +14,7 @@ public static class SimpleAppFixture
 	static Process? _appProcess;
 	static AgentClient? _client;
 	static int _agentPort;
-	static string? _exePath;
+	static string? _appPath;
 
 	public static AgentClient Client
 		=> _client ?? throw new InvalidOperationException("DevFlow fixture is not initialized. Is SimpleApp running?");
@@ -34,19 +34,19 @@ public static class SimpleAppFixture
 
 		await BuildAppAsync(projectPath);
 
-		_exePath = FindExecutable(repoRoot);
-		if (_exePath is null)
-			Assert.Inconclusive("Could not locate SimpleApp.exe. Build SimpleApp for Windows first.");
+		_appPath = FindAppExecutable(repoRoot);
+		if (_appPath is null)
+			Assert.Inconclusive($"Could not locate the {GetTargetFramework()} SimpleApp executable.");
 
-		var psi = new ProcessStartInfo(_exePath)
+		var psi = new ProcessStartInfo(_appPath)
 		{
 			UseShellExecute = false,
-			WorkingDirectory = Path.GetDirectoryName(_exePath) ?? Environment.CurrentDirectory,
+			WorkingDirectory = Path.GetDirectoryName(_appPath) ?? Environment.CurrentDirectory,
 		};
 		psi.Environment["DEVFLOW_TEST_PORT"] = _agentPort.ToString();
 
 		_appProcess = Process.Start(psi)
-			?? throw new InvalidOperationException($"Failed to launch {_exePath}");
+			?? throw new InvalidOperationException($"Failed to launch {_appPath}");
 
 		_client = new AgentClient("localhost", _agentPort);
 		await WaitForAgentAsync(_client, TimeSpan.FromSeconds(45));
@@ -82,7 +82,7 @@ public static class SimpleAppFixture
 			{
 				"build",
 				projectPath,
-				"-f", "net10.0-windows10.0.19041.0",
+				"-f", GetTargetFramework(),
 				"-c", "Debug",
 				"-p:MauiDevFlowEnabled=true",
 				"--nologo",
@@ -122,15 +122,38 @@ public static class SimpleAppFixture
 		throw new TimeoutException($"DevFlow agent did not become ready on port {_agentPort} within {timeout.TotalSeconds}s.");
 	}
 
-	static string? FindExecutable(string repoRoot)
+	static string GetTargetFramework()
+	{
+		if (OperatingSystem.IsWindows())
+			return "net10.0-windows10.0.19041.0";
+
+		if (OperatingSystem.IsMacOS())
+			return "net10.0-maccatalyst";
+
+		throw new PlatformNotSupportedException("SimpleApp DevFlow integration tests support Windows and macOS only.");
+	}
+
+	static string? FindAppExecutable(string repoRoot)
 	{
 		var binDir = Path.Combine(repoRoot, "SimpleApp", "bin", "Debug");
 		if (!Directory.Exists(binDir))
 			return null;
 
-		return Directory.GetFiles(binDir, "SimpleApp.exe", SearchOption.AllDirectories)
+		if (OperatingSystem.IsWindows())
+		{
+			return Directory.GetFiles(binDir, "SimpleApp.exe", SearchOption.AllDirectories)
 			.OrderByDescending(File.GetLastWriteTimeUtc)
 			.FirstOrDefault();
+		}
+
+		var appBundle = Directory.GetDirectories(binDir, "SimpleApp.app", SearchOption.AllDirectories)
+			.OrderByDescending(Directory.GetLastWriteTimeUtc)
+			.FirstOrDefault();
+		var executablePath = appBundle is null
+			? null
+			: Path.Combine(appBundle, "Contents", "MacOS", "SimpleApp");
+
+		return executablePath is not null && File.Exists(executablePath) ? executablePath : null;
 	}
 
 	static string FindRepoRoot()
