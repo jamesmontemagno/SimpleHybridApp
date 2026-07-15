@@ -82,6 +82,18 @@
 		<None Update="mathbuddy.local.json" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
+	<ItemGroup Condition="'$(MauiProfilingHelperInject)' == 'true'">
+		<RuntimeEnvironmentVariable Include="MAUI_PROFILING_HELPER">
+			<Value>1</Value>
+		</RuntimeEnvironmentVariable>
+		<RuntimeEnvironmentVariable Include="MAUI_PROFILING_HELPER_EXIT_HOST">
+			<Value>$(MauiProfilingHelperExitHost)</Value>
+		</RuntimeEnvironmentVariable>
+		<RuntimeEnvironmentVariable Include="MAUI_PROFILING_HELPER_EXIT_PORT">
+			<Value>$(MauiProfilingHelperExitPort)</Value>
+		</RuntimeEnvironmentVariable>
+	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\SimpleApp.Core\SimpleApp.Core.csproj" />
 	</ItemGroup>

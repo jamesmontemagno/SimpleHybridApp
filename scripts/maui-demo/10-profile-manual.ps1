@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('Auto', 'Windows', 'Android', 'iOS', 'MacCatalyst')]
+    [ValidateSet('Auto', 'Android', 'iOS')]
     [string]$Platform = 'Auto',
     [string]$Device
 )
@@ -10,28 +10,34 @@ $ErrorActionPreference = 'Stop'
 $project = Join-Path $PSScriptRoot '..\..\SimpleApp\SimpleApp.csproj'
 $outputDirectory = Join-Path $PSScriptRoot '..\..\artifacts\profiles'
 
+function Assert-ProfilingTools {
+    $missingTools = @('dotnet-trace', 'dotnet-dsrouter') | Where-Object {
+        $null -eq (Get-Command $_ -ErrorAction SilentlyContinue)
+    }
+
+    if ($missingTools.Count -gt 0) {
+        throw "Install the required profiling tools with: dotnet tool install --global dotnet-trace; dotnet tool install --global dotnet-dsrouter. Missing: $($missingTools -join ', ')."
+    }
+}
+
 function Select-ProfilePlatform {
     while ($true) {
         Write-Host "`n=== Choose a profiling target ===" -ForegroundColor Cyan
 
         if ($IsWindows) {
-            Write-Host '  1. Windows desktop' -ForegroundColor White
-            Write-Host '  2. Android device or emulator' -ForegroundColor White
-            switch (Read-Host 'Select a target') {
-                '1' { return 'Windows' }
-                '2' { return 'Android' }
-                default { Write-Host 'Choose 1 for Windows or 2 for Android.' -ForegroundColor Yellow }
+            Write-Host '  1. Android device or emulator' -ForegroundColor White
+            if ((Read-Host 'Select a target') -eq '1') {
+                return 'Android'
             }
+            Write-Host 'Choose 1 for Android.' -ForegroundColor Yellow
         }
         elseif ($IsMacOS) {
-            Write-Host '  1. Mac Catalyst' -ForegroundColor White
-            Write-Host '  2. iOS device or simulator' -ForegroundColor White
-            Write-Host '  3. Android device or emulator' -ForegroundColor White
+            Write-Host '  1. iOS simulator' -ForegroundColor White
+            Write-Host '  2. Android device or emulator' -ForegroundColor White
             switch (Read-Host 'Select a target') {
-                '1' { return 'MacCatalyst' }
-                '2' { return 'iOS' }
-                '3' { return 'Android' }
-                default { Write-Host 'Choose 1 for Mac Catalyst, 2 for iOS, or 3 for Android.' -ForegroundColor Yellow }
+                '1' { return 'iOS' }
+                '2' { return 'Android' }
+                default { Write-Host 'Choose 1 for iOS or 2 for Android.' -ForegroundColor Yellow }
             }
         }
         else {
@@ -48,10 +54,8 @@ if ($Platform -eq 'Auto') {
     $Platform = Select-ProfilePlatform
 }
 $framework = switch ($Platform) {
-    'Windows' { 'net10.0-windows10.0.19041.0' }
     'Android' { 'net10.0-android' }
     'iOS' { 'net10.0-ios' }
-    'MacCatalyst' { 'net10.0-maccatalyst' }
 }
 $output = Join-Path $outputDirectory "simpleapp-manual-$($Platform.ToLower()).speedscope.json"
 
@@ -59,6 +63,11 @@ Show-DemoHeader `
     -Title '10. Profile a manual workflow' `
     -Why 'Manual profiling captures a specific workflow after you navigate to the interesting screen.' `
     -What "Launch SimpleApp on $Platform, press Enter to start collection, exercise the app, then press Enter again to save a Speedscope trace."
+
+Invoke-DemoCommand `
+    -Command 'Get-Command dotnet-trace, dotnet-dsrouter' `
+    -Does 'Verifies the diagnostics tools DevFlow uses instead of its Windows dnx fallback.' `
+    -Run { Assert-ProfilingTools }
 
 Invoke-DemoCommand `
     -Command "New-Item -ItemType Directory -Path `"$outputDirectory`" -Force" `

@@ -34,6 +34,6 @@ Run `pwsh ./scripts/maui-demo/03-devices.ps1` for the interactive loop. Pass `-A
 | `CreateAppleSimulator` | `-Action CreateAppleSimulator -DeviceType <id> -Name MauiDemo` | Create an Apple simulator on macOS. Optional: `-Runtime` to select a specific runtime. |
 | `StartAppleSimulator` | `-Action StartAppleSimulator -NameOrUdid "iPhone 16 Pro"` | Boot an Apple simulator on macOS. |
 
-The create actions can change your machine. With no `-Platform` argument, profiling scripts prompt for a target: Windows or Android on Windows; Mac Catalyst, iOS, or Android on macOS. Pass `-Platform Windows`, `-Platform Android`, `-Platform iOS`, or `-Platform MacCatalyst` to skip the prompt.
+The create actions can change your machine. The MAUI CLI supports profiling Android and the iOS simulator only. With no `-Platform` argument, profiling scripts prompt for Android on Windows and iOS simulator or Android on macOS. Pass `-Platform Android` or `-Platform iOS` to skip the prompt. Before profiling, install the required diagnostics tools once: `dotnet tool install --global dotnet-trace` and `dotnet tool install --global dotnet-dsrouter`.
 
 With no `-Platform` argument, script `04` asks where to launch: Windows or Android on Windows; Mac Catalyst, iOS, or Android on macOS. Pass `-Platform Windows`, `-Platform Android`, `-Platform iOS`, or `-Platform MacCatalyst` to skip the prompt.
