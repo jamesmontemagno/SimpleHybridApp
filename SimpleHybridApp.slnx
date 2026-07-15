@@ -1,0 +1,21 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="SimpleApp.Core/SimpleApp.Core.csproj" />
+  <Project Path="SimpleApp.DevFlow.Tests/SimpleApp.DevFlow.Tests.csproj" />
+  <Project Path="SimpleApp.Tests/SimpleApp.Tests.csproj" />
+  <Project Path="SimpleApp/SimpleApp.csproj" />
+  <Project Path="SimpleBlazorHybridApp/SimpleBlazorHybridApp.csproj">
+    <Platform Solution="Debug|ARM64" Project="ARM64" />
+    <Deploy Solution="Debug|ARM64" />
+  </Project>
+  <Project Path="SimpleHybridApp/SimpleHybridApp.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Deploy Solution="Debug|Any CPU" />
+    <Deploy Solution="Debug|ARM64" />
+  </Project>
+</Solution>
