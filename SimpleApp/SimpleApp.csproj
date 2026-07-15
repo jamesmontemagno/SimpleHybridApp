@@ -71,7 +71,7 @@
 		<!-- Align with MAUI Controls 10.x line for Apple Intelligence backends -->
 		<PackageReference Include="Microsoft.Maui.Essentials.AI" Version="10.0.80-preview.1.26319.4" />
 		<!-- Explicit agent reference so CLI/test builds work without VS Code MauiDevFlow.targets injection -->
-		<PackageReference Include="Microsoft.Maui.DevFlow.Agent" Version="0.1.0-preview.12.26358.3" Condition="'$(Configuration)' == 'Debug'" />
+		<PackageReference Include="Microsoft.Maui.DevFlow.Agent" Version="0.1.0-preview.12.26358.3" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
