@@ -47,15 +47,19 @@ public sealed class MathBuddyService
 		if (chatClient is null)
 			return null;
 
-		return new ChatClientBuilder(chatClient)
-			.UseFunctionInvocation()
-			.ConfigureOptions(options =>
-			{
-				options.Tools ??= [];
-				foreach (var tool in MathBuddyToolContext.Default.Tools)
-					options.Tools.Add(tool);
-			})
-			.Build(_services);
+		var builder = new ChatClientBuilder(chatClient);
+		if (!_clientFactory.IsUsingAppleIntelligence)
+		{
+			builder.UseFunctionInvocation()
+				.ConfigureOptions(options =>
+				{
+					options.Tools ??= [];
+					foreach (var tool in MathBuddyToolContext.Default.Tools)
+						options.Tools.Add(tool);
+				});
+		}
+
+		return builder.Build(_services);
 	}
 
 	public async IAsyncEnumerable<string> StreamReplyAsync(
