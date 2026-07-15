@@ -75,7 +75,7 @@ Invoke-DemoCommand `
     -Does 'Creates the local folder that will hold the trace output.' `
     -Run { New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null }
 
-$arguments = @('profile', 'startup', '--project', $project, '--framework', $framework, '--configuration', 'Release', '--duration', $Duration, '--format', 'speedscope', '--stopping-event-provider-name', 'Microsoft.Maui.ProfilingHelper', '--stopping-event-event-name', 'StartupComplete', '--output', $output)
+$arguments = @('profile', 'startup', '--project', $project, '--framework', $framework, '--configuration', 'Release', '--duration', $Duration, '--format', 'speedscope', '--stopping-event-provider-name', 'Microsoft.Maui.StartupProfiling', '--stopping-event-event-name', 'StartupComplete', '--output', $output)
 if (-not [string]::IsNullOrWhiteSpace($Device)) {
     $arguments += '--device', $Device
 }

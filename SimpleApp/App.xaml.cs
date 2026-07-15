@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.StartupProfiling;
 
 namespace SimpleApp;
 
@@ -11,9 +12,12 @@ public partial class App : Application
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
-		return new Window(new AppShell())
+		var window = new Window(new AppShell())
 		{
 			Title = "SimpleApp"
 		};
+
+		StartupProfilingMarker.Complete();
+		return window;
 	}
 }
