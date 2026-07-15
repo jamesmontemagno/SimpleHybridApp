@@ -1,24 +1,4 @@
 {
-	"servers": {
-		"microsoftdocs/mcp": {
-			"type": "http",
-			"url": "https://learn.microsoft.com/api/mcp",
-			"gallery": "https://api.mcp.github.com",
-			"version": "1.0.0"
-		},
-		"com.microsoft/nuget": {
-			"type": "stdio",
-			"command": "dnx",
-			"args": [
-				"NuGet.Mcp.Server@1.4.16",
-				"--yes",
-				"--source",
-				"https://api.nuget.org/v3/index.json"
-			],
-			"gallery": "https://api.mcp.github.com",
-			"version": "1.4.16"
-		}
-	},
 	"inputs": [
 		{
 			"id": "token",
@@ -26,5 +6,13 @@
 			"description": "",
 			"password": true
 		}
-	]
+	],
+	"servers": {
+		"microsoftdocs/mcp": {
+			"type": "http",
+			"url": "https://learn.microsoft.com/api/mcp",
+			"gallery": "https://api.mcp.github.com",
+			"version": "1.0.0"
+		}
+	}
 }
