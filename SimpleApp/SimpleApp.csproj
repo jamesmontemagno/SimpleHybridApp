@@ -80,7 +80,7 @@
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
-		<None Update="mathbuddy.local.json" CopyToOutputDirectory="PreserveNewest" />
+		<MauiAsset Include="mathbuddy.local.json" LogicalName="mathbuddy.local.json" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(MauiProfilingHelperInject)' == 'true'">

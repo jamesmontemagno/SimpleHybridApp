@@ -60,8 +60,7 @@ public sealed class MathBuddySettingsService
 #if DEBUG
 	static MathBuddySettings GetDebugSettings()
 	{
-		var debugFilePath = Path.Combine(AppContext.BaseDirectory, DebugSettingsFileName);
-		var debugFileSettings = ReadSettingsFile(debugFilePath);
+		var debugFileSettings = ReadDebugSettingsFile();
 		var hasDebugFile = HasAnyValue(debugFileSettings);
 
 		var settings = new MathBuddySettings
@@ -83,6 +82,19 @@ public sealed class MathBuddySettingsService
 		};
 
 		return Normalize(settings, settings.Source);
+	}
+
+	static MathBuddySettings ReadDebugSettingsFile()
+	{
+		try
+		{
+			using var stream = FileSystem.OpenAppPackageFileAsync(DebugSettingsFileName).GetAwaiter().GetResult();
+			return JsonSerializer.Deserialize<MathBuddySettings>(stream, JsonOptions) ?? new MathBuddySettings();
+		}
+		catch
+		{
+			return new MathBuddySettings();
+		}
 	}
 #endif
 
