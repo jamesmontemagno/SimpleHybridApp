@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Maui.StartupProfiling;
 
 namespace SimpleApp;
 
@@ -17,7 +16,6 @@ public partial class App : Application
 			Title = "SimpleApp"
 		};
 
-		StartupProfilingMarker.Complete();
 		return window;
 	}
 }

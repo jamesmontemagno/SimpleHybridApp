@@ -1,4 +1,5 @@
-﻿using SimpleApp.Core;
+﻿using Microsoft.Maui.ProfilingHelper;
+using SimpleApp.Core;
 using SimpleApp.Services;
 
 namespace SimpleApp;
@@ -7,6 +8,7 @@ public partial class MainPage : ContentPage
 {
 	readonly CalculatorService _calculator;
 	readonly ConfettiDrawable _confetti = new();
+	bool _startupMarkerScheduled;
 
 	public MainPage()
 	{
@@ -20,6 +22,12 @@ public partial class MainPage : ContentPage
 	{
 		base.OnAppearing();
 		RefreshUi();
+
+		if (!_startupMarkerScheduled)
+		{
+			_startupMarkerScheduled = true;
+			Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(1), MauiProfilingMarker.Complete);
+		}
 	}
 
 	void OnDigitClicked(object? sender, EventArgs e)

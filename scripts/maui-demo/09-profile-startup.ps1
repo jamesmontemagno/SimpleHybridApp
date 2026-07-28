@@ -58,12 +58,14 @@ $framework = switch ($Platform) {
     'Android' { 'net10.0-android' }
     'iOS' { 'net10.0-ios' }
 }
-$output = Join-Path $outputDirectory "simpleapp-startup-$($Platform.ToLower()).speedscope.json"
+$outputBase = Join-Path $outputDirectory "simpleapp-startup-$($Platform.ToLower())"
+$output = "$outputBase.speedscope.json"
+$profileOutput = if ($Platform -eq 'Android') { "$outputBase.nettrace" } else { $output }
 
 Show-DemoHeader `
     -Title '09. Profile app startup' `
     -Why 'A startup trace makes launch-time CPU and timing costs visible instead of anecdotal.' `
-    -What "Launch and trace SimpleApp on $Platform for $Duration, then write a Speedscope-compatible trace."
+    -What "Launch and trace SimpleApp on $Platform for $Duration, then write a Speedscope-compatible trace. Android collects a stable runtime-owned trace before converting it."
 
 Invoke-DemoCommand `
     -Command 'Get-Command dotnet-trace, dotnet-dsrouter' `
@@ -75,7 +77,13 @@ Invoke-DemoCommand `
     -Does 'Creates the local folder that will hold the trace output.' `
     -Run { New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null }
 
-$arguments = @('profile', 'startup', '--project', $project, '--framework', $framework, '--configuration', 'Release', '--duration', $Duration, '--format', 'speedscope', '--stopping-event-provider-name', 'Microsoft.Maui.StartupProfiling', '--stopping-event-event-name', 'StartupComplete', '--output', $output)
+$arguments = @('profile', 'startup', '--project', $project, '--framework', $framework, '--configuration', 'Release', '--duration', $Duration, '--output', $profileOutput)
+if ($Platform -eq 'Android') {
+    $arguments += '--format', 'nettrace'
+}
+else {
+    $arguments += '--format', 'speedscope', '--stopping-event-provider-name', 'Microsoft.Maui.ProfilingHelper', '--stopping-event-event-name', 'StartupComplete'
+}
 if (-not [string]::IsNullOrWhiteSpace($Device)) {
     $arguments += '--device', $Device
 }
@@ -83,4 +91,25 @@ if (-not [string]::IsNullOrWhiteSpace($Device)) {
 Invoke-DemoCommand `
     -Command "maui $($arguments -join ' ')" `
     -Does 'Builds, launches, and collects a bounded startup trace from SimpleApp.' `
-    -Run { & maui @arguments }
+    -Run {
+        $previousUseMonoRuntime = $env:UseMonoRuntime
+        $previousDisableNodeReuse = $env:MSBUILDDISABLENODEREUSE
+        try {
+            if ($Platform -eq 'Android') {
+                $env:UseMonoRuntime = 'false'
+                $env:MSBUILDDISABLENODEREUSE = '1'
+            }
+            Invoke-CheckedNativeCommand -Name 'maui profile startup' -Run { & maui @arguments }
+        }
+        finally {
+            $env:UseMonoRuntime = $previousUseMonoRuntime
+            $env:MSBUILDDISABLENODEREUSE = $previousDisableNodeReuse
+        }
+    }
+
+if ($Platform -eq 'Android') {
+    Invoke-DemoCommand `
+        -Command "dotnet-trace convert `"$profileOutput`" --format Speedscope --output `"$outputBase`"" `
+        -Does 'Converts the stable Android runtime-owned trace to Speedscope while retaining the raw trace.' `
+        -Run { Invoke-CheckedNativeCommand -Name 'dotnet-trace convert' -Run { & dotnet-trace convert $profileOutput --format Speedscope --output $outputBase } }
+}

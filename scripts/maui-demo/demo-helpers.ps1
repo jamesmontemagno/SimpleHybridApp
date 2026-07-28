@@ -21,3 +21,15 @@ function Invoke-DemoCommand {
     Write-Host "Does:    $Does" -ForegroundColor DarkGray
     & $Run
 }
+
+function Invoke-CheckedNativeCommand {
+    param(
+        [string]$Name,
+        [scriptblock]$Run
+    )
+
+    & $Run
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Name exited with code $LASTEXITCODE."
+    }
+}

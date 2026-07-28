@@ -2,7 +2,8 @@
 param(
     [ValidateSet('Auto', 'Android', 'iOS')]
     [string]$Platform = 'Auto',
-    [string]$Device
+    [string]$Device,
+    [string]$Duration = '00:00:15'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -62,7 +63,7 @@ $output = Join-Path $outputDirectory "simpleapp-manual-$($Platform.ToLower()).sp
 Show-DemoHeader `
     -Title '10. Profile a manual workflow' `
     -Why 'Manual profiling captures a specific workflow after you navigate to the interesting screen.' `
-    -What "Launch SimpleApp on $Platform, press Enter to start collection, exercise the app, then press Enter again to save a Speedscope trace."
+    -What "Launch SimpleApp on $Platform, press Enter to start collection, then exercise the app for $Duration while the trace stops automatically."
 
 Invoke-DemoCommand `
     -Command 'Get-Command dotnet-trace, dotnet-dsrouter' `
@@ -74,12 +75,12 @@ Invoke-DemoCommand `
     -Does 'Creates the local folder that will hold the trace output.' `
     -Run { New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null }
 
-$arguments = @('profile', 'manual', '--project', $project, '--framework', $framework, '--configuration', 'Release', '--format', 'speedscope', '--output', $output)
+$arguments = @('profile', 'manual', '--project', $project, '--framework', $framework, '--configuration', 'Release', '--duration', $Duration, '--format', 'speedscope', '--output', $output)
 if (-not [string]::IsNullOrWhiteSpace($Device)) {
     $arguments += '--device', $Device
 }
 
 Invoke-DemoCommand `
     -Command "maui $($arguments -join ' ')" `
-    -Does 'Launches SimpleApp and waits for you to begin and end trace collection.' `
-    -Run { & maui @arguments }
+    -Does 'Launches SimpleApp, waits for you to begin collection, and stops after the bounded duration.' `
+    -Run { Invoke-CheckedNativeCommand -Name 'maui profile manual' -Run { & maui @arguments } }
