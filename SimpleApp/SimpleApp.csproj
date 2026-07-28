@@ -20,6 +20,7 @@
 		<Nullable>enable</Nullable>
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 		<UseMaterial3>True</UseMaterial3>
+		<UseMonoRuntime Condition="'$(ManualProfileUseMono)' == 'true' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</UseMonoRuntime>
 
 		<!-- Display name -->
 		<ApplicationTitle>SimpleApp</ApplicationTitle>
