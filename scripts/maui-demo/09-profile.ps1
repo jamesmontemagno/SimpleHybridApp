@@ -60,11 +60,11 @@ $framework = switch ($Platform) {
     'Android' { 'net10.0-android' }
     'iOS' { 'net10.0-ios' }
 }
-$output = Join-Path $outputDirectory "simpleapp-manual-$($Platform.ToLower()).speedscope.json"
+$output = Join-Path $outputDirectory "simpleapp-$($Platform.ToLower()).speedscope.json"
 
 Show-DemoHeader `
-    -Title '10. Profile a manual workflow' `
-    -Why 'Manual profiling captures a specific workflow after you navigate to the interesting screen.' `
+    -Title '09. Profile SimpleApp' `
+    -Why 'Profiling captures CPU and timing costs for the workflow you want to investigate.' `
     -What "Launch SimpleApp on $Platform, press Enter to start collection, then exercise the app for $Duration while the trace stops automatically."
 
 Invoke-DemoCommand `
@@ -96,17 +96,17 @@ Invoke-DemoCommand `
     -Command "maui $($arguments -join ' ')" `
     -Does 'Launches SimpleApp, waits for you to begin collection, and stops after the bounded duration.' `
     -Run {
-        $previousManualProfileUseMono = $env:ManualProfileUseMono
+        $previousProfilingUseMono = $env:ProfilingUseMono
         $previousDisableNodeReuse = $env:MSBUILDDISABLENODEREUSE
         try {
             if ($Platform -eq 'Android') {
-                $env:ManualProfileUseMono = 'true'
+                $env:ProfilingUseMono = 'true'
                 $env:MSBUILDDISABLENODEREUSE = '1'
             }
             Invoke-CheckedNativeCommand -Name 'maui profile manual' -Run { & maui @arguments }
         }
         finally {
-            $env:ManualProfileUseMono = $previousManualProfileUseMono
+            $env:ProfilingUseMono = $previousProfilingUseMono
             $env:MSBUILDDISABLENODEREUSE = $previousDisableNodeReuse
         }
     }

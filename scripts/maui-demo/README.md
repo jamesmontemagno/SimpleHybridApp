@@ -13,12 +13,11 @@ Run these scripts from the repository root with PowerShell 7 (`pwsh`). Each one 
 | `06-calculate.ps1` | Automates `2 + 3 = 5` and saves a screenshot. | Shows stable AutomationId-based UI automation and assertion. |
 | `07-history.ps1` | Opens and inspects calculation History. | Shows an observable multi-screen user journey. |
 | `08-start-mcp.ps1` | Starts the DevFlow MCP server. | Makes the same running-app capabilities available to an AI agent. |
-| `09-profile-startup.ps1` | Captures a bounded startup trace. | Shows app launch performance analysis. |
-| `10-profile-manual.ps1` | Starts an on-demand performance trace. | Shows profiling a workflow after navigation. |
+| `09-profile.ps1` | Starts a bounded on-demand performance trace. | Shows profiling a workflow after navigation. |
 
 ## Suggested order
 
-Run `00`, then use the looping `01-doctor.ps1` menu for environment checks, and run `02-project-version` before building or launching the app. Next, use the looping `03-devices.ps1` menu to list or start a mobile target. In one terminal, run `04-run-simpleapp.ps1` and leave it running. When the calculator window appears, use a second terminal for `05`, `06`, and `07`. Use `08` only when connecting an MCP-capable AI client. Run `09` or `10` when you want a performance trace.
+Run `00`, then use the looping `01-doctor.ps1` menu for environment checks, and run `02-project-version` before building or launching the app. Next, use the looping `03-devices.ps1` menu to list or start a mobile target. In one terminal, run `04-run-simpleapp.ps1` and leave it running. When the calculator window appears, use a second terminal for `05`, `06`, and `07`. Use `08` only when connecting an MCP-capable AI client. Run `09` when you want a performance trace.
 
 Script `05` lists its full walkthrough plan, shows what comes next at each step, and waits for Enter before each command. Type `Q` instead to stop the guided walkthrough, or pass `-RunAll` to run its full sequence without prompts. Script `08` prints a presenter talk track and suggested AI prompts before starting its foreground MCP server.
 

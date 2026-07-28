@@ -1,6 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" TreatAsLocalProperty="MauiDevFlowAgentVersion">
 
 	<PropertyGroup>
+		<MauiDevFlowAgentVersion>0.1.0-preview.12.26368.2</MauiDevFlowAgentVersion>
 		<TargetFrameworks>net10.0-android</TargetFrameworks>
 		<TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
@@ -20,7 +21,7 @@
 		<Nullable>enable</Nullable>
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 		<UseMaterial3>True</UseMaterial3>
-		<UseMonoRuntime Condition="'$(ManualProfileUseMono)' == 'true' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</UseMonoRuntime>
+		<UseMonoRuntime Condition="'$(ProfilingUseMono)' == 'true' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</UseMonoRuntime>
 
 		<!-- Display name -->
 		<ApplicationTitle>SimpleApp</ApplicationTitle>
@@ -68,11 +69,11 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.Extensions.AI" Version="10.7.0" />
 		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.7.0" />
-		<PackageReference Include="Microsoft.Maui.AI.Attributes" Version="0.1.0-preview.12.26358.3" />
+		<PackageReference Include="Microsoft.Maui.AI.Attributes" Version="0.1.0-preview.12.26368.2" />
 		<!-- Align with MAUI Controls 10.x line for Apple Intelligence backends -->
 		<PackageReference Include="Microsoft.Maui.Essentials.AI" Version="10.0.80-preview.1.26319.4" />
 		<!-- Explicit agent reference so CLI/test builds work without VS Code MauiDevFlow.targets injection -->
-		<PackageReference Include="Microsoft.Maui.DevFlow.Agent" Version="0.1.0-preview.12.26358.3" />
+		<PackageReference Include="Microsoft.Maui.DevFlow.Agent" Version="0.1.0-preview.12.26368.2" />
 		<PackageReference Include="Microsoft.Maui.ProfilingHelper" Version="0.1.0-preview.12.26368.2" />
 	</ItemGroup>
 
