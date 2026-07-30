@@ -3,6 +3,7 @@ param([switch]$RunAll)
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'demo-helpers.ps1')
+$project = Join-Path $PSScriptRoot '..\..\SimpleApp\SimpleApp.csproj'
 
 Show-DemoHeader `
 	-Title '05. Discover and inspect the DevFlow agent' `
@@ -11,7 +12,13 @@ Show-DemoHeader `
 
 $steps = @(
 	[pscustomobject]@{
-		Title = 'Discover the running app'
+		Title = 'Wait for the running app agent'
+		Command = 'maui devflow wait --project SimpleApp/SimpleApp.csproj --timeout 30'
+		Does = 'Waits for this project to register with the DevFlow broker before inspection begins.'
+		Run = { maui devflow wait --project $project --timeout 30 }
+	},
+	[pscustomobject]@{
+		Title = 'List the discovered app'
 		Command = 'maui devflow agent list'
 		Does = 'Lists the live DevFlow agents available to the CLI.'
 		Run = { maui devflow agent list }

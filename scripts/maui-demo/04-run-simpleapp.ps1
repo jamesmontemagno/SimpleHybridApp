@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [ValidateSet('Auto', 'Android', 'iOS', 'MacCatalyst', 'Windows')]
-    [string]$Platform = 'Auto'
+    [string]$Platform = 'Auto',
+    [string]$Device
 )
 
 $ErrorActionPreference = 'Stop'
@@ -19,6 +20,47 @@ function Invoke-InProjectDirectory {
     finally {
         Pop-Location
     }
+}
+
+function Initialize-AndroidDevFlow {
+    $devices = @(& maui device list --json | ConvertFrom-Json | Where-Object {
+        $_.platform -eq 'android' -and $_.state -eq 'Connected'
+    })
+
+    if ([string]::IsNullOrWhiteSpace($Device)) {
+        if ($devices.Count -eq 0) {
+            throw 'No connected Android device or emulator was found. Start one with 03-devices.ps1 first.'
+        }
+        if ($devices.Count -gt 1) {
+            throw 'More than one Android target is connected. Re-run with -Device <identifier>.'
+        }
+        $script:Device = $devices[0].identifier
+    }
+    elseif ($Device -notin $devices.identifier) {
+        throw "Android target '$Device' is not connected. Run 03-devices.ps1 -Action List to see valid identifiers."
+    }
+
+    & maui devflow broker start | Out-Host
+    if ($LASTEXITCODE -ne 0) {
+        throw "maui devflow broker start exited with code $LASTEXITCODE."
+    }
+
+    $broker = & maui devflow broker status --json | ConvertFrom-Json
+    $diagnostics = & maui devflow --platform android --device $Device diagnose --json | ConvertFrom-Json
+    $adb = $diagnostics.android.adb_path
+    if ([string]::IsNullOrWhiteSpace($adb) -or -not (Test-Path $adb)) {
+        throw 'DevFlow could not locate adb. Run 01-doctor.ps1 and check the Android environment.'
+    }
+
+    Invoke-DemoCommand `
+        -Command "adb -s $Device reverse tcp:$($broker.port) tcp:$($broker.port)" `
+        -Does 'Lets the Android app register with the DevFlow broker running on the host.' `
+        -Run { Invoke-CheckedNativeCommand -Name 'adb reverse' -Run { & $adb -s $Device reverse "tcp:$($broker.port)" "tcp:$($broker.port)" } }
+
+    Invoke-DemoCommand `
+        -Command "adb -s $Device forward tcp:9223 tcp:9223" `
+        -Does 'Lets DevFlow commands reach the HTTP agent running inside the Android app.' `
+        -Run { Invoke-CheckedNativeCommand -Name 'adb forward' -Run { & $adb -s $Device forward 'tcp:9223' 'tcp:9223' } }
 }
 
 function Select-LaunchPlatform {
@@ -67,6 +109,10 @@ $framework = switch ($Platform) {
 }
 
 $arguments = @('run', '--project', $project, '-p:Configuration=Debug', '--framework', $framework)
+if ($Platform -eq 'Android') {
+    Initialize-AndroidDevFlow
+    $arguments += @('--device', $Device)
+}
 if ($Platform -eq 'iOS') {
     $runtime = if ((& uname -m) -eq 'arm64') { 'iossimulator-arm64' } else { 'iossimulator-x64' }
     $arguments += @('--runtime', $runtime)
