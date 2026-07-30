@@ -18,7 +18,9 @@ public sealed class MathBuddyService
 		Guidelines:
 		- Be concise, encouraging, and clear.
 		- Prefer step-by-step explanations with intermediate results.
-		- When calculator state is relevant, call tools to inspect display/history.
+		- Use get_calculator_state when you need the current display, in-progress expression, or recent calculations.
+		- Use explain_current_calculation when the learner asks to explain the calculation currently on screen.
+		- Use list_recent_history when the learner asks to check their last calculation or review previous calculations.
 		- Do not invent calculator results; use tools or the provided expression context.
 		- If no AI backend is available, the app will show configuration guidance instead of calling you.
 		""";
@@ -74,7 +76,10 @@ public sealed class MathBuddyService
 		}
 
 		var messages = EnsureSystemPrompt(history);
-		await foreach (var update in client.GetStreamingResponseAsync(messages, cancellationToken: cancellationToken))
+		await foreach (var update in client.GetStreamingResponseAsync(
+			messages,
+			CreateChatOptions(),
+			cancellationToken))
 		{
 			if (!string.IsNullOrEmpty(update.Text))
 				yield return update.Text;
@@ -90,7 +95,10 @@ public sealed class MathBuddyService
 			return AvailabilityMessage;
 
 		var messages = EnsureSystemPrompt(history);
-		var response = await client.GetResponseAsync(messages, cancellationToken: cancellationToken);
+		var response = await client.GetResponseAsync(
+			messages,
+			CreateChatOptions(),
+			cancellationToken);
 		return string.IsNullOrWhiteSpace(response.Text)
 			? "(no response)"
 			: response.Text;
@@ -112,6 +120,11 @@ public sealed class MathBuddyService
 			[new ChatMessage(ChatRole.User, prompt)],
 			cancellationToken);
 	}
+
+	ChatOptions? CreateChatOptions()
+		=> _clientFactory.IsUsingAppleIntelligence
+			? new ChatOptions { Tools = [.. MathBuddyToolContext.Default.Tools.OfType<AIFunction>()] }
+			: null;
 
 	static List<ChatMessage> EnsureSystemPrompt(IList<ChatMessage> history)
 	{

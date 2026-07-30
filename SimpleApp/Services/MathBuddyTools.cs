@@ -17,7 +17,7 @@ public sealed class MathBuddyTools(CalculatorService calculator)
 		maxHistory = Math.Clamp(maxHistory, 0, 20);
 		var history = calculator.History
 			.TakeLast(maxHistory)
-			.Select(h => $"{h.Expression} = {h.Result}")
+			.Select(h => $"{h.Expression} = {h.ResultDisplay}")
 			.ToArray();
 
 		return $$"""
@@ -54,7 +54,7 @@ public sealed class MathBuddyTools(CalculatorService calculator)
 
 		return string.Join(
 			Environment.NewLine,
-			calculator.History.TakeLast(count).Select((h, i) => $"{i + 1}. {h.Expression} = {h.Result}"));
+			calculator.History.TakeLast(count).Select((h, i) => $"{i + 1}. {h.Expression} = {h.ResultDisplay}"));
 	}
 }
 

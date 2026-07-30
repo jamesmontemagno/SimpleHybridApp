@@ -40,7 +40,7 @@
                             <Label Text="{Binding Expression}"
                                    FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                            <Label Text="{Binding Result, StringFormat='= {0}'}"
+                            <Label Text="{Binding ResultDisplay, StringFormat='= {0}'}"
                                    TextColor="{StaticResource Primary}" />
                             <Label Text="{Binding Timestamp, StringFormat='{0:g}'}"
                                    FontSize="12"

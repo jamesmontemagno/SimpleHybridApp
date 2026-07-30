@@ -28,7 +28,8 @@ public sealed partial class MathBuddyViewModel : ObservableObject
 		"Explain order of operations",
 		"How do I multiply fractions?",
 		"Why is 20 + 5 = 25?",
-		"Help me check my last calculation"
+		"Help me check my last calculation", 
+		"Explain current calculator expression"
 	];
 
 	[ObservableProperty]
@@ -135,6 +136,7 @@ public sealed partial class MathBuddyViewModel : ObservableObject
 		catch (Exception ex)
 		{
 			assistant.Text = $"Error: {ex.Message}";
+			_history.Add(new ChatMessage(ChatRole.Assistant, assistant.Text));
 			StatusText = "Error";
 		}
 		finally

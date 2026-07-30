@@ -18,6 +18,7 @@ public sealed class CalculatorService
 	double _lastResult;
 	char _lastOperator = '\0';
 	bool _newNumber = true;
+	bool _hasError;
 
 	public void InputDigit(string digit)
 	{
@@ -25,6 +26,9 @@ public sealed class CalculatorService
 
 		if (digit is not ("." or "0" or "1" or "2" or "3" or "4" or "5" or "6" or "7" or "8" or "9"))
 			throw new ArgumentException($"Unsupported digit: {digit}", nameof(digit));
+
+		if (_hasError)
+			Clear();
 
 		if (digit == ".")
 		{
@@ -57,6 +61,8 @@ public sealed class CalculatorService
 			throw new ArgumentException($"Unsupported operator: {op}", nameof(op));
 
 		ShouldCelebrate = false;
+		if (_hasError)
+			Clear();
 
 		if (!_newNumber)
 			Calculate();
@@ -84,7 +90,14 @@ public sealed class CalculatorService
 
 		if (_lastOperator == '/' && currentValue == 0)
 		{
-			Clear();
+			const string errorMessage = "Division by zero is undefined.";
+			AddToHistory(fullExpression, double.NaN, errorMessage);
+			Expression = fullExpression;
+			_currentNumber = "0";
+			_lastResult = 0;
+			_lastOperator = '\0';
+			_newNumber = true;
+			_hasError = true;
 			Display = "Error";
 			return double.NaN;
 		}
@@ -107,6 +120,7 @@ public sealed class CalculatorService
 		Expression = string.Empty;
 		_lastOperator = '\0';
 		_newNumber = true;
+		_hasError = false;
 		ShouldCelebrate = Math.Abs(_lastResult - 25d) < 0.0000000001;
 		UpdateDisplay();
 		return _lastResult;
@@ -119,18 +133,20 @@ public sealed class CalculatorService
 		_lastResult = 0;
 		_lastOperator = '\0';
 		_newNumber = true;
+		_hasError = false;
 		ShouldCelebrate = false;
 		UpdateDisplay();
 	}
 
 	public void ClearHistory() => _history.Clear();
 
-	public void AddToHistory(string expression, double result)
+	public void AddToHistory(string expression, double result, string? errorMessage = null)
 	{
 		_history.Add(new CalculationHistory
 		{
 			Expression = expression,
 			Result = result,
+			ErrorMessage = errorMessage,
 			Timestamp = DateTime.Now
 		});
 	}

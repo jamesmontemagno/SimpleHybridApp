@@ -49,7 +49,12 @@ public sealed class CalculatorServiceTests
 
 		Assert.IsTrue(double.IsNaN(result));
 		Assert.AreEqual("Error", calculator.Display);
+		Assert.AreEqual("8 / 0", calculator.Expression);
 		Assert.IsFalse(calculator.ShouldCelebrate);
+		Assert.HasCount(1, calculator.History);
+		Assert.AreEqual("8 / 0", calculator.History[0].Expression);
+		Assert.AreEqual("Division by zero is undefined.", calculator.History[0].ErrorMessage);
+		Assert.AreEqual("Error: Division by zero is undefined.", calculator.History[0].ResultDisplay);
 	}
 
 	[TestMethod]
