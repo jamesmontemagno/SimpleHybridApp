@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:core="clr-namespace:SimpleApp.Core;assembly=SimpleApp.Core"
+             x:Class="SimpleApp.Pages.HistoryPage"
+             Title="History"
+             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <Grid Padding="16"
+          RowDefinitions="Auto,*,Auto"
+          RowSpacing="12"
+          AutomationId="HistoryPage">
+
+        <Label Grid.Row="0"
+               Text="Calculation History"
+               Style="{StaticResource Headline}"
+               AutomationId="HistoryTitleLabel" />
+
+        <CollectionView Grid.Row="1"
+                        x:Name="HistoryList"
+                        AutomationId="HistoryList"
+                        SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="No calculations yet."
+                       AutomationId="HistoryEmptyLabel"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center"
+                       Margin="0,40" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="core:CalculationHistory">
+                    <Border StrokeThickness="1"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                            StrokeShape="RoundRectangle 10"
+                            Padding="12"
+                            Margin="0,0,0,8"
+                            Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding Expression}"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                            <Label Text="{Binding ResultDisplay, StringFormat='= {0}'}"
+                                   TextColor="{StaticResource Primary}" />
+                            <Label Text="{Binding Timestamp, StringFormat='{0:g}'}"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="12">
+            <Button Grid.Column="0"
+                    Text="Clear History"
+                    AutomationId="BtnClearHistory"
+                    Style="{StaticResource CalcClearButton}"
+                    Clicked="OnClearHistoryClicked" />
+            <Button Grid.Column="1"
+                    Text="Back to Calculator"
+                    AutomationId="BtnBackToCalculator"
+                    Style="{StaticResource CalcHistoryButton}"
+                    Clicked="OnBackClicked" />
+        </Grid>
+    </Grid>
+</ContentPage>

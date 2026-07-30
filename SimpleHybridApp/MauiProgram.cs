@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+#if MAUI_DEVFLOW
+using Microsoft.Maui.DevFlow.Agent;
+#endif
 
 namespace SimpleHybridApp
 {
@@ -18,6 +21,10 @@ namespace SimpleHybridApp
 #if DEBUG
             builder.Services.AddHybridWebViewDeveloperTools();
     		builder.Logging.AddDebug();
+#endif
+
+#if MAUI_DEVFLOW
+            builder.AddMauiDevFlowAgent();
 #endif
 
             return builder.Build();

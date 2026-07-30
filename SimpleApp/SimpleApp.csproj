@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" TreatAsLocalProperty="MauiDevFlowAgentVersion">
 
 	<PropertyGroup>
-		<TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+		<MauiDevFlowAgentVersion>0.1.0-preview.12.26368.2</MauiDevFlowAgentVersion>
+		<TargetFrameworks>net10.0-android</TargetFrameworks>
+		<TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
-		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net10.0-tizen</TargetFrameworks> -->
 
 		<!-- Note for MacCatalyst:
 		The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
@@ -14,23 +14,24 @@
 		<!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
 
 		<OutputType>Exe</OutputType>
-		<RootNamespace>SimpleHybridApp</RootNamespace>
+		<RootNamespace>SimpleApp</RootNamespace>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<MauiXamlInflator>SourceGen</MauiXamlInflator>
+		<UseMaterial3>True</UseMaterial3>
+		<UseMonoRuntime Condition="'$(ProfilingUseMono)' == 'true' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</UseMonoRuntime>
 
 		<!-- Display name -->
-		<ApplicationTitle>SimpleHybridApp</ApplicationTitle>
+		<ApplicationTitle>SimpleApp</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.simplehybridapp</ApplicationId>
+		<ApplicationId>com.companyname.simpleapp</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
-
-		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
@@ -38,8 +39,6 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
-		<Platforms>AnyCPU;ARM32;ARM64</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -52,7 +51,11 @@
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
-
+		<MauiImage Update="Resources\Images\tab_calculator.svg" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\tab_history.svg" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\tab_math_buddy.svg" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\tab_settings.svg" BaseSize="24,24" />
+		
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
@@ -63,10 +66,39 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.80" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.9" />
-		<PackageReference Include="Microsoft.Maui.DevFlow.Agent" Version="0.1.0-preview.12.26358.3" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+		<PackageReference Include="Microsoft.Extensions.AI" Version="10.7.0" />
+		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.7.0" />
+		<PackageReference Include="Microsoft.Maui.AI.Attributes" Version="0.1.0-preview.12.26368.2" />
+		<!-- Align with MAUI Controls 10.x line for Apple Intelligence backends -->
+		<PackageReference Include="Microsoft.Maui.Essentials.AI" Version="10.0.80-preview.1.26319.4" />
+		<!-- Explicit agent reference so CLI/test builds work without VS Code MauiDevFlow.targets injection -->
+		<PackageReference Include="Microsoft.Maui.DevFlow.Agent" Version="0.1.0-preview.12.26368.2" />
+		<PackageReference Include="Microsoft.Maui.ProfilingHelper" Version="0.1.0-preview.12.26368.2" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
 		<DefineConstants>$(DefineConstants);MAUI_DEVFLOW</DefineConstants>
 	</PropertyGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<MauiAsset Include="mathbuddy.local.json" LogicalName="mathbuddy.local.json" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(MauiProfilingHelperInject)' == 'true'">
+		<RuntimeEnvironmentVariable Include="MAUI_PROFILING_HELPER">
+			<Value>1</Value>
+		</RuntimeEnvironmentVariable>
+		<RuntimeEnvironmentVariable Include="MAUI_PROFILING_HELPER_EXIT_HOST">
+			<Value>$(MauiProfilingHelperExitHost)</Value>
+		</RuntimeEnvironmentVariable>
+		<RuntimeEnvironmentVariable Include="MAUI_PROFILING_HELPER_EXIT_PORT">
+			<Value>$(MauiProfilingHelperExitPort)</Value>
+		</RuntimeEnvironmentVariable>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SimpleApp.Core\SimpleApp.Core.csproj" />
+	</ItemGroup>
+
 </Project>

@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SimpleApp.MainPage"
+             Title="Calculator"
+             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <Grid Padding="16"
+          RowDefinitions="Auto,*,Auto,Auto"
+          RowSpacing="16"
+          AutomationId="CalculatorPage">
+
+        <Border Grid.Row="0"
+                StrokeThickness="0"
+                Background="{StaticResource Primary}"
+                StrokeShape="RoundRectangle 12"
+                Padding="16">
+            <VerticalStackLayout Spacing="4">
+                <Label x:Name="ExpressionLabel"
+                       AutomationId="ExpressionLabel"
+                       Text=""
+                       TextColor="{StaticResource Secondary}"
+                       FontSize="16"
+                       LineBreakMode="TailTruncation"
+                       HorizontalTextAlignment="End" />
+                <Label x:Name="DisplayLabel"
+                       AutomationId="DisplayLabel"
+                       Text="0"
+                       TextColor="{StaticResource White}"
+                       FontSize="42"
+                       FontAttributes="Bold"
+                       LineBreakMode="TailTruncation"
+                       HorizontalTextAlignment="End" />
+            </VerticalStackLayout>
+        </Border>
+
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,*,*,*"
+              RowDefinitions="*,*,*,*,*"
+              ColumnSpacing="10"
+              RowSpacing="10">
+
+            <Button Grid.Row="0" Grid.Column="0" Text="7" AutomationId="Btn7" Style="{StaticResource CalcNumberButton}" Clicked="OnDigitClicked" />
+            <Button Grid.Row="0" Grid.Column="1" Text="8" AutomationId="Btn8" Style="{StaticResource CalcNumberButton}" Clicked="OnDigitClicked" />
+            <Button Grid.Row="0" Grid.Column="2" Text="9" AutomationId="Btn9" Style="{StaticResource CalcNumberButton}" Clicked="OnDigitClicked" />
+            <Button Grid.Row="0" Grid.Column="3" Text="/" AutomationId="BtnDivide" Style="{StaticResource CalcOperatorButton}" Clicked="OnOperatorClicked" />
+
+            <Button Grid.Row="1" Grid.Column="0" Text="4" AutomationId="Btn4" Style="{StaticResource CalcNumberButton}" Clicked="OnDigitClicked" />
+            <Button Grid.Row="1" Grid.Column="1" Text="5" AutomationId="Btn5" Style="{StaticResource CalcNumberButton}" Clicked="OnDigitClicked" />
+            <Button Grid.Row="1" Grid.Column="2" Text="6" AutomationId="Btn6" Style="{StaticResource CalcNumberButton}" Clicked="OnDigitClicked" />
+            <Button Grid.Row="1" Grid.Column="3" Text="*" AutomationId="BtnMultiply" Style="{StaticResource CalcOperatorButton}" Clicked="OnOperatorClicked" />
+
+            <Button Grid.Row="2" Grid.Column="0" Text="1" AutomationId="Btn1" Style="{StaticResource CalcNumberButton}" Clicked="OnDigitClicked" />
+            <Button Grid.Row="2" Grid.Column="1" Text="2" AutomationId="Btn2" Style="{StaticResource CalcNumberButton}" Clicked="OnDigitClicked" />
+            <Button Grid.Row="2" Grid.Column="2" Text="3" AutomationId="Btn3" Style="{StaticResource CalcNumberButton}" Clicked="OnDigitClicked" />
+            <Button Grid.Row="2" Grid.Column="3" Text="-" AutomationId="BtnSubtract" Style="{StaticResource CalcOperatorButton}" Clicked="OnOperatorClicked" />
+
+            <Button Grid.Row="3" Grid.Column="0" Text="0" AutomationId="Btn0" Style="{StaticResource CalcNumberButton}" Clicked="OnDigitClicked" />
+            <Button Grid.Row="3" Grid.Column="1" Text="." AutomationId="BtnDecimal" Style="{StaticResource CalcNumberButton}" Clicked="OnDigitClicked" />
+            <Button Grid.Row="3" Grid.Column="2" Text="=" AutomationId="BtnEquals" Style="{StaticResource CalcEqualsButton}" Clicked="OnEqualsClicked" />
+            <Button Grid.Row="3" Grid.Column="3" Text="+" AutomationId="BtnAdd" Style="{StaticResource CalcOperatorButton}" Clicked="OnOperatorClicked" />
+
+            <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                    Text="Clear"
+                    AutomationId="BtnClear"
+                    Style="{StaticResource CalcClearButton}"
+                    Clicked="OnClearClicked" />
+            <Button Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2"
+                    Text="History"
+                    AutomationId="BtnHistory"
+                    Style="{StaticResource CalcHistoryButton}"
+                    Clicked="OnHistoryClicked" />
+        </Grid>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="10">
+            <Button Grid.Column="0"
+                    Text="Explain"
+                    AutomationId="BtnExplain"
+                    Style="{StaticResource CalcOperatorButton}"
+                    Clicked="OnExplainClicked" />
+            <Button Grid.Column="1"
+                    Text="Math Buddy"
+                    AutomationId="BtnMathBuddy"
+                    Style="{StaticResource CalcEqualsButton}"
+                    Clicked="OnMathBuddyClicked" />
+        </Grid>
+
+        <Label Grid.Row="3"
+               x:Name="StatusLabel"
+               AutomationId="StatusLabel"
+               Text="Ready"
+               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
+               FontSize="14"
+               HorizontalTextAlignment="Center" />
+
+        <GraphicsView x:Name="ConfettiView"
+                                        Grid.RowSpan="4"
+                                        AutomationId="ConfettiOverlay"
+                                        InputTransparent="True"
+                                        IsVisible="False" />
+    </Grid>
+</ContentPage>

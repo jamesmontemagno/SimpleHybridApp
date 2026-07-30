@@ -1,0 +1,4 @@
+{
+  "dotnetAcquisitionExtension.sharedExistingDotnetPath": "/usr/local/share/dotnet/dotnet",
+  "dotnet.useLegacyDotnetResolution": true
+}
